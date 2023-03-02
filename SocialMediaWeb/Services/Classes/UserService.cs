@@ -55,7 +55,7 @@ namespace SocialMediaWeb.Services.Classes
             await System.IO.File.WriteAllTextAsync(filePath, model.Image);
 
             var user = _mapper.Map<User>(model);
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, BCrypt.Net.BCrypt.GenerateSalt());
             user.ImagePath = filePath; // Save image path to database
 
             try
