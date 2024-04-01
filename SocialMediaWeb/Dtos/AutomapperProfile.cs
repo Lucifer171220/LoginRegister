@@ -16,7 +16,7 @@ namespace SocialMediaWeb.Dtos
             CreateMap<UserUpdateDto, User>();
 
             CreateMap<CreateCommentDto, Comment>();
-            }
+        }
         }
     }
 

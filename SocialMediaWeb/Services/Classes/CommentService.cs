@@ -33,7 +33,7 @@ namespace SocialMediaWeb.Services.Classes
 
         public async Task<List<Comment>> GetCommentAsync(int postId)
         {
-            var comments = await _dbContext.Comments.Where(c => c.PostId == postId).ToListAsync();
+            var comments = await _dbContext.Comments.Include(c => c.User).Where(c => c.PostId == postId).ToListAsync();
 
             return comments;
         }

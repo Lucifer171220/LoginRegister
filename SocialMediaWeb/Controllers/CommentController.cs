@@ -19,10 +19,9 @@ namespace SocialMediaWeb.Controllers
 
 
         [HttpPost]
-        public ActionResult<CreateCommentDto> AddCommentToPost(CreateCommentDto commentDto)
+        public async Task<ActionResult<Comment>> AddCommentToPost(CreateCommentDto commentDto)
         {
-            var comment = _service.CreateCommentAsync(commentDto);
-
+            var comment = await _service.CreateCommentAsync(commentDto);
             return Ok(comment);
         }
 
@@ -40,5 +39,6 @@ namespace SocialMediaWeb.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }
