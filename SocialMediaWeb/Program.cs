@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SocialMediaWeb.Dtos;
@@ -12,13 +13,22 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseWebRoot("wwwroot");
+
 builder.Services.AddControllers();
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Con")));
 
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISocialMediaPost, SocialMedia>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
+
+
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -78,7 +88,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
+app.UseDirectoryBrowser();
+
 app.UseHttpsRedirection();
+
+app.UseCors("ReactJsDomain");
 
 app.UseAuthentication();
 app.UseAuthorization();

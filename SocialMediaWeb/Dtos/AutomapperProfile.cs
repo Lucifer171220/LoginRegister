@@ -11,7 +11,12 @@ namespace SocialMediaWeb.Dtos
             CreateMap<UserRegistrationDto, User>();
             CreateMap<UserLoginDto, User>();
             CreateMap<User,UserResponseDto>();
-            }
+            CreateMap<User, ResponseDto>();
+
+            CreateMap<UserUpdateDto, User>();
+
+            CreateMap<CreateCommentDto, Comment>();
+        }
         }
     }
 

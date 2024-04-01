@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocialMediaWeb.Dtos;
+using SocialMediaWeb.Models;
 using SocialMediaWeb.Services.Interfaces;
+using System.Diagnostics.Metrics;
 
 namespace SocialMediaWeb.Controllers
 {
@@ -10,10 +14,12 @@ namespace SocialMediaWeb.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost("register")]
@@ -22,26 +28,71 @@ namespace SocialMediaWeb.Controllers
             try
             {
                 await _userService.RegisterAsync(registrationDto);
-                return Ok();
+                return Ok(registrationDto);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDto authenticationDto)
+        public async Task<IActionResult> Login([FromForm]UserLoginDto authenticationDto)
         {
             try
             {
                 var userResponseDto = await _userService.LoginAsync(authenticationDto);
                 return Ok(userResponseDto);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<User>> UpdateUser([FromForm] UserUpdateDto userUpdateDto)
+        {
+            /*try
+            {*/
+                var user = await _userService.UpdateUserAsync(userUpdateDto);
+                return Ok(user);
+           /* }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error updating user: {ex.Message}");
+            }*/
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetSingleUser(int id)
+        {
+            try
+            {
+                var user = await _userService.FindById(id);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+        [HttpGet("Get")]
+        public async Task<ActionResult<User>> GetUsers()
+        {
+            try
+            {
+                var user = await _userService.GetUserAsync();
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"No User Found {ex.Message}");
+            }
+
         }
     }
 }
